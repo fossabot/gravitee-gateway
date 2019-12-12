@@ -17,11 +17,20 @@ package io.gravitee.gateway.core.logging.utils;
 
 import io.gravitee.gateway.api.ExecutionContext;
 
+import java.util.List;
+
+import static io.gravitee.common.http.MediaType.*;
+import static io.gravitee.common.http.MediaType.TEXT_HTML;
+import static java.util.Arrays.asList;
+
 /**
  * @author Titouan COMPIEGNE (titouan.compiegne at graviteesource.com)
  * @author GraviteeSource Team
  */
 public final class LoggingUtils {
+
+    private static final List<String> RESPONSE_CONTENT_TYPES_TO_INCLUDE = asList(APPLICATION_JSON, APPLICATION_XML,
+            APPLICATION_ATOM_XML, APPLICATION_XHTML_XML, TEXT_PLAIN, TEXT_XML, TEXT_HTML);
 
     public static int getMaxSizeLogMessage(ExecutionContext executionContext) {
         try {
@@ -29,5 +38,9 @@ public final class LoggingUtils {
         } catch (Exception ex) {
             return -1;
         }
+    }
+
+    public static boolean isResponseContentTypeLoggable(final String contentType) {
+        return contentType == null || RESPONSE_CONTENT_TYPES_TO_INCLUDE.contains(contentType.toLowerCase());
     }
 }
