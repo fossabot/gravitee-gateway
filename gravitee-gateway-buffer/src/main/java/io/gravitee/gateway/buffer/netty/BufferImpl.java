@@ -65,7 +65,15 @@ public class BufferImpl implements Buffer {
     @Override
     public Buffer appendBuffer(Buffer buff, int length) {
         ByteBuf cb = (ByteBuf) buff.getNativeBuffer();
-        return appendBuf(cb, Math.min(buff.length(), length));
+        if ((buffer.readableBytes() + buff.length()) > length) {
+            final int remainingSpace = length - buffer.readableBytes();
+            if (remainingSpace > 0) {
+                return appendBuf(cb.readBytes(remainingSpace), remainingSpace);
+            } else {
+                return this;
+            }
+        }
+        return appendBuf(cb, buff.length());
     }
 
     @Override
